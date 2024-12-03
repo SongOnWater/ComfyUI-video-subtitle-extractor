@@ -11,7 +11,7 @@ class SubtitleExtractorWrapper:
         return {
             "required": { 
                 "video_path": ("STRING", {"default":"",}),
-                "subtitle_area": ("BBOX"),
+                "subtitle_area": ("BBOX",{}),
             },
         }
 
@@ -26,7 +26,7 @@ class SubtitleExtractorWrapper:
             se = SubtitleExtractor(video_path, subtitle_area)
             # 开始提取字幕z
             se.run() 
-            srt_file=os.path.join(os.path.splitext(self.video_path)[0] + '.srt')
+            srt_file=os.path.join(os.path.splitext(video_path)[0] + '.srt')
             subs = pysrt.open(srt_file, encoding='utf-8')
             return (srt_file,subs.text)
     
