@@ -129,7 +129,7 @@ cd <源码所在目录>
 
 （2）创建激活conda环境
 ```shell
-conda create -n videoEnv python=3.12
+conda create -n videoEnv python=3.12 # 如果不使用 gui.py， 可以用3.11 
 ```
 
 ```shell
