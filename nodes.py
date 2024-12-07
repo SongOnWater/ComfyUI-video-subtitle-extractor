@@ -1,4 +1,5 @@
 import configparser
+import shutil
 from .backend.main import SubtitleExtractor
 import os 
 import pysrt
@@ -104,6 +105,7 @@ class SubtitleExtractorWrapper:
     RETURN_TYPES = ("STRING", "STRING")
     RETURN_NAMES = ("srt_path", "srt")
     FUNCTION = "wrapper_run"
+    CATEGORY = "video_subtitle"
     OUTPUT_NODE = True
     def wrapper_run(self,video_path,subtitle_area,inter_lang,sub_lang,mode,use_gpu):
             sub_lang_code=self.LANGUAGE_NAME_KEY_MAP[sub_lang]
@@ -119,7 +121,17 @@ class SubtitleExtractorWrapper:
             # 开始提取字幕z
             se.run() 
             srt_file=os.path.join(os.path.splitext(video_path)[0] + '.srt')
-            with open(srt_file, 'r') as f:
+            # 创建ComfyUI输出目录
+            output_dir = os.path.join("output", "video_subtitle_extractor")
+            os.makedirs(output_dir, exist_ok=True)
+        
+            # 构建新的输出路径
+            filename = os.path.basename(srt_file)
+            new_output_path = os.path.join(output_dir, filename)
+        
+            # 移动文件到新位置并删除原文件
+            shutil.move(srt_file, new_output_path)
+            with open(new_output_path, 'r') as f:
                 srt_content = f.read()
-            return (srt_file,srt_content)
+            return (new_output_path,srt_content)
     
