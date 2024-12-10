@@ -21,7 +21,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 import importlib
-import config
+from . import config 
 from tools import reformat
 from tools.infer import utility
 from tools.infer.predict_det import TextDetector
