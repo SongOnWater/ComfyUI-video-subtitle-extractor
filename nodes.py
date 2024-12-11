@@ -1,5 +1,6 @@
 import configparser
 import shutil
+from threading import Thread
 from .backend.main import SubtitleExtractor
 import os 
 import pysrt
@@ -119,7 +120,10 @@ class SubtitleExtractorWrapper:
                 subtitle_area = (  y, y+height,x, x+width)
             se = SubtitleExtractor(video_path, subtitle_area)
             # 开始提取字幕z
-            se.run() 
+            extraction_thread = Thread(target=se.run, daemon=True)
+            extraction_thread.start()
+            extraction_thread.join()
+
             srt_file=os.path.join(os.path.splitext(video_path)[0] + '.srt')
             # 创建ComfyUI输出目录
             output_dir = os.path.join("output", "video_subtitle_extractor")
