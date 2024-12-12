@@ -243,15 +243,16 @@ def async_start(video_path, raw_subtitle_path, sub_area, options):
     assert 'DEBUG_OCR_LOSS' in options, "options缺少参数: DEBUG_OCR_LOSS"
     # 创建一个任务队列
     # 任务格式为：(total_frame_count总帧数, current_frame_no当前帧, dt_box检测框, rec_res识别结果, subtitle_area字幕区域)
-    task_queue = Queue()
+    task_queue = queue.Queue()
     # 创建一个进度更新队列
-    progress_queue = Queue()
+    progress_queue = queue.Queue()
     # 新建一个进程
-    p = Process(target=subtitle_extract_handler,
-                args=(task_queue, progress_queue, video_path, raw_subtitle_path, sub_area, SimpleNamespace(**options),))
+    handler_thread = Thread(target=subtitle_extract_handler,
+                            args=(task_queue, progress_queue, video_path, raw_subtitle_path, sub_area, SimpleNamespace(**options),),
+                            daemon=True)
     # 启动进程
-    p.start()
-    return p, task_queue, progress_queue
+    handler_thread.start()
+    return handler_thread, task_queue, progress_queue
 
 
 def frame_preprocess(subtitle_area, frame):
